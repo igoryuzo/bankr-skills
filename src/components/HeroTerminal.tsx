@@ -45,7 +45,7 @@ export default function HeroTerminal() {
             <span className="text-neutral-400">$ </span>
             <span>npx skills add https://github.com/bankrbot/openclaw-skills --skill{' '}</span>
             <span
-              className={`inline-block rounded-full bg-[#a88bfb] px-3 py-0.5 text-white transition-all duration-200 ${
+              className={`inline-block rounded-lg bg-[#a88bfb] px-3 py-0.5 text-white transition-all duration-200 ${
                 isAnimating
                   ? 'opacity-0 translate-y-1'
                   : 'opacity-100 translate-y-0'
