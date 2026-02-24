@@ -1,10 +1,8 @@
-import type { Metadata } from 'next';
+'use client';
 
-export const metadata: Metadata = {
-  title: 'Competitor Flags — Bankr Skills',
-  description:
-    'Cross-reference analysis of 11 skills against Bankr capabilities — redundancies, overlaps, and unique domains.',
-};
+import { useState } from 'react';
+
+const PASSWORD = 'gamalthecamel';
 
 type FlagCategory = 'redundant' | 'different-layer' | 'partial' | 'dependency' | 'no-overlap';
 
@@ -58,15 +56,6 @@ const categoryConfig: Record<
 };
 
 const analyses: CompetitorAnalysis[] = [
-  {
-    skill: 'Clanker',
-    category: 'redundant',
-    bankrOverlap:
-      "Bankr's EVM token deployment literally wraps Clanker under the hood for Base/Unichain. Bankr covers 100% of Clanker's functionality and adds Solana launches via Raydium LaunchLab.",
-    uniqueCapabilities: [],
-    verdict:
-      'Fully redundant. Clanker standalone adds nothing beyond what Bankr already provides. The Clanker skill is only useful if you specifically want to avoid the Bankr dependency.',
-  },
   {
     skill: 'OnchainKit',
     category: 'different-layer',
@@ -220,7 +209,54 @@ const bankrCapabilities = [
   'LLM Gateway (multi-model)',
 ];
 
-export default function CompetitorFlagsPage() {
+export default function AnalyzePage() {
+  const [authenticated, setAuthenticated] = useState(false);
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState(false);
+
+  if (!authenticated) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="rounded-2xl bg-white p-8 terminal-card w-full max-w-sm">
+          <h1 className="text-xl font-extrabold text-[#1a1a1a] mb-1">Internal</h1>
+          <p className="text-xs font-mono text-neutral-400 mb-6">Enter password to continue</p>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (password === PASSWORD) {
+                setAuthenticated(true);
+                setError(false);
+              } else {
+                setError(true);
+              }
+            }}
+          >
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setError(false);
+              }}
+              placeholder="Password"
+              className={`w-full rounded-lg border ${error ? 'border-red-300' : 'border-neutral-200'} px-4 py-3 text-sm font-mono outline-none focus:border-neutral-400 transition-colors`}
+              autoFocus
+            />
+            {error && (
+              <p className="mt-2 text-xs font-mono text-red-500">Incorrect password</p>
+            )}
+            <button
+              type="submit"
+              className="mt-4 w-full rounded-lg bg-[#2d2d2d] px-4 py-3 text-[12px] font-mono font-semibold uppercase tracking-[0.1em] text-white hover:bg-[#404040] transition-colors"
+            >
+              Continue
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
   const categoryCounts = Object.entries(categoryConfig).map(([key, config]) => ({
     key: key as FlagCategory,
     ...config,
@@ -232,10 +268,10 @@ export default function CompetitorFlagsPage() {
       {/* Header */}
       <div className="text-center mb-16">
         <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-[#1a1a1a] leading-tight">
-          Competitor Flags.
+          Skill Analysis.
         </h1>
         <p className="mt-4 max-w-2xl mx-auto text-lg text-neutral-500 leading-relaxed">
-          How do the 11 non-Bankr skills compare against Bankr&apos;s 100+
+          How do the 10 non-Bankr skills compare against Bankr&apos;s 100+
           capabilities? Redundancies, overlaps, and unique domains.
         </p>
       </div>

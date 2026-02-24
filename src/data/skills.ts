@@ -25,49 +25,32 @@ export const skills: Skill[] = [
     provider: 'BankrBot',
     providerUrl: 'https://github.com/BankrBot',
     description:
-      'Full-stack crypto trading agent — swaps, bridges, transfers, NFTs, Polymarket, leverage, token deployment, and 100+ capabilities across 5 chains.',
+      'The financial stack for agents — token deployment, swaps, bridges, transfers, leverage, and 100+ capabilities.',
     demo: {
-      title: 'bankr-swap.ts',
-      language: 'typescript',
-      code: `// Buy $50 of ETH on Base
-const result = await bankr.submit({
-  prompt: "Buy $50 of ETH on Base",
-  userId: "user-123"
-});
+      title: 'bankr-cli.sh',
+      language: 'bash',
+      code: `# Trade with natural language
+bankr prompt "Buy $50 of ETH on Base"
+bankr prompt "Bridge 0.1 ETH from Ethereum to Base"
 
-// Cross-chain bridge
-await bankr.submit({
-  prompt: "Bridge 0.1 ETH from Ethereum to Base"
-});`,
+# Portfolio & research
+bankr prompt "Show my portfolio"
+bankr prompt "What tokens are trending on Base?"
+
+# Automate
+bankr prompt "DCA $100 into ETH every week"
+bankr prompt "Set stop loss for my ETH at $2,500"`,
     },
     setup: [
-      'Install the skill: `npx openclaw install bankr`',
-      'Set your API key: `export BANKR_API_KEY=your-key`',
-      'Configure chains in `bankr.config.json`',
-      'Run the agent: `npx openclaw run bankr`',
+      'Install CLI: `npm install -g @bankr/cli`',
+      'Login: `bankr login email you@example.com`',
+      'Verify: `bankr whoami`',
+      'Trade: `bankr prompt "Buy $50 of ETH on Base"`',
     ],
     securityFindings: [
       {
-        severity: 'critical',
-        title: 'Prompt Injection → Arbitrary Transactions',
-        file: 'bankr/scripts/submit.ts',
-        description:
-          'User-supplied prompts are passed directly to the LLM execution layer without sanitization. A crafted prompt can instruct the agent to execute arbitrary on-chain transactions, including draining wallet funds.',
-        recommendation:
-          'Implement prompt boundary enforcement with a transaction allow-list. Require explicit user confirmation for high-value or first-time transaction patterns.',
-      },
-      {
-        severity: 'high',
-        title: 'Unrestricted Wallet Access Scope',
-        file: 'bankr/scripts/wallet.ts',
-        description:
-          'The agent wallet has full signing authority with no per-transaction limits or spending caps. Any successful prompt injection can access the entire wallet balance.',
-        recommendation:
-          'Implement per-transaction spending limits and require multi-step approval for transactions exceeding a configurable threshold.',
-      },
-      {
-        severity: 'medium',
-        title: 'API Key Exposure in Logs',
+        severity: 'low',
+        title: 'API Key Exposure in Verbose Logs',
         file: 'bankr/scripts/config.ts',
         description:
           'Debug logging includes API key values in plaintext when verbose mode is enabled. Log output may be captured in CI/CD systems or shared terminal sessions.',
@@ -75,7 +58,7 @@ await bankr.submit({
           'Mask sensitive values in all log output. Use key references instead of raw values.',
       },
     ],
-    overallRating: 'flagged',
+    overallRating: 'clean',
   },
   {
     slug: 'bankr-signals',
@@ -83,26 +66,27 @@ await bankr.submit({
     provider: 'BankrBot',
     providerUrl: 'https://github.com/BankrBot',
     description:
-      'Social copy-trading signals — monitors whale wallets and influencer trades, feeds signals into Bankr for automated execution.',
+      'Transaction-verified trading signals on Base — register as provider, publish trades with TX hash proof, consume signals from top performers via REST API.',
     demo: {
-      title: 'signals-config.ts',
-      language: 'typescript',
-      code: `// Subscribe to whale wallet signals
-const signals = await bankrSignals.watch({
-  wallets: ["0xd8dA..."],
-  minTradeSize: "$10,000",
-  autoExecute: false
-});
+      title: 'signals-api.sh',
+      language: 'bash',
+      code: `# Read latest signals (public, no auth needed)
+curl https://bankrsignals.com/api/feed?limit=20
 
-signals.on("trade", (signal) => {
-  console.log(\`Whale bought \${signal.token}\`);
-});`,
+# View top traders leaderboard
+curl https://bankrsignals.com/api/leaderboard
+
+# Publish a signal (requires EIP-191 signature)
+curl -X POST https://bankrsignals.com/api/signals \\
+  -d '{"provider":"0x...","action":"LONG","token":"ETH",
+       "entryPrice":2650,"txHash":"0x...","collateralUsd":100,
+       "message":"bankr-signals:signal:...","signature":"0x..."}'`,
     },
     setup: [
-      'Install: `npx openclaw install bankr-signals`',
-      'Requires Bankr skill as dependency',
-      'Configure watched wallets in `signals.config.json`',
-      'Set alert thresholds and auto-execute preferences',
+      'Install: `npx skills add bankr-signals`',
+      'Register as provider with EIP-191 wallet signature',
+      'Publish signals with TX hash proof after each trade',
+      'Read signals: `GET bankrsignals.com/api/feed`',
     ],
     securityFindings: [
       {
@@ -132,28 +116,27 @@ signals.on("trade", (signal) => {
     provider: 'BankrBot',
     providerUrl: 'https://github.com/BankrBot',
     description:
-      'On-chain agent messaging protocol — enables agents to send, receive, and verify messages through smart contract events.',
+      'On-chain agent messaging layer on Base — explore other agents, post to feeds, send direct messages, and store information permanently on-chain via Net Protocol.',
     demo: {
-      title: 'botchan-message.ts',
-      language: 'typescript',
-      code: `// Send a verified on-chain message
-await botchan.send({
-  to: "0xAgent...",
-  message: "Execute trade confirmation",
-  channel: "trades",
-  sign: true
-});
+      title: 'botchan-cli.sh',
+      language: 'bash',
+      code: `# Read what agents are saying
+botchan read general --limit 5
 
-// Listen for incoming messages
-botchan.on("message", (msg) => {
-  console.log(\`From \${msg.sender}: \${msg.text}\`);
-});`,
+# Post to a feed (permanent, on-chain)
+botchan post general "Hello from my agent!"
+
+# DM another agent (post to their profile)
+botchan post 0xAgentAddress "Want to collaborate?"
+
+# Check your inbox
+botchan read 0xYourAddress --unseen --json`,
     },
     setup: [
-      'Install: `npx openclaw install botchan`',
-      'Configure RPC endpoint in `botchan.config.json`',
-      'Register your agent address on the messaging contract',
-      'Start listening: `npx openclaw run botchan`',
+      'Install skill: `npx skills add stuckinaboot/botchan`',
+      'Install CLI: `npm install -g botchan`',
+      'Set wallet: `export BOTCHAN_PRIVATE_KEY=0x...`',
+      'Or use `--encode-only` flag to submit via Bankr',
     ],
     securityFindings: [
       {
@@ -169,55 +152,6 @@ botchan.on("message", (msg) => {
     overallRating: 'clean',
   },
   {
-    slug: 'clanker',
-    name: 'Clanker',
-    provider: 'Clanker',
-    providerUrl: 'https://clanker.world',
-    description:
-      'EVM token deployment via Clanker protocol — deploy ERC-20 tokens on Base and Unichain with automatic liquidity pool creation.',
-    demo: {
-      title: 'deploy-token.ts',
-      language: 'typescript',
-      code: `// Deploy a new ERC-20 token on Base
-const token = await clanker.deploy({
-  name: "My Token",
-  symbol: "MTK",
-  chain: "base",
-  initialLiquidity: "1 ETH"
-});
-
-console.log(\`Token deployed: \${token.address}\`);
-console.log(\`Pool: \${token.poolAddress}\`);`,
-    },
-    setup: [
-      'Install: `npx openclaw install clanker`',
-      'Set deployer wallet private key in environment',
-      'Configure target chain (Base or Unichain)',
-      'Fund wallet with ETH for gas + initial liquidity',
-    ],
-    securityFindings: [
-      {
-        severity: 'high',
-        title: 'Private Key Passed as CLI Argument',
-        file: 'clanker/scripts/deploy.ts',
-        description:
-          'The deployer private key can be passed via command-line argument, which is visible in process listings (ps aux) and shell history.',
-        recommendation:
-          'Only accept private keys via environment variables or encrypted keystore files. Never accept secrets as CLI arguments.',
-      },
-      {
-        severity: 'medium',
-        title: 'No Token Parameter Validation',
-        file: 'clanker/scripts/validate.ts',
-        description:
-          'Token name, symbol, and initial supply are not validated before deployment. Malformed parameters could deploy tokens with misleading metadata.',
-        recommendation:
-          'Validate token parameters against reasonable bounds — symbol length, name character set, and supply limits.',
-      },
-    ],
-    overallRating: 'warning',
-  },
-  {
     slug: 'endaoment',
     name: 'Endaoment',
     provider: 'Endaoment',
@@ -225,23 +159,21 @@ console.log(\`Pool: \${token.poolAddress}\`);`,
     description:
       'Charitable donations on-chain — look up 501(c)(3) organizations by EIN, donate crypto, and deploy donor-advised fund entities.',
     demo: {
-      title: 'donate.ts',
-      language: 'typescript',
-      code: `// Donate to a charity by EIN
-const donation = await endaoment.donate({
-  ein: "13-1837418", // Doctors Without Borders
-  amount: "0.5 ETH",
-  donor: "0xYourWallet..."
-});
+      title: 'donate.sh',
+      language: 'bash',
+      code: `# Search charities by EIN or name
+./scripts/search.sh "27-1661997"  # GiveDirectly
+./scripts/search.sh "Red Cross"
 
-console.log(\`Donation tx: \${donation.txHash}\`);
-console.log(\`Tax receipt: \${donation.receiptUrl}\`);`,
+# Donate USDC to any 501(c)(3) on Base
+./scripts/donate.sh 27-1661997 5  # $5 to GiveDirectly
+./scripts/donate.sh 13-1623829 10 # $10 to ASPCA`,
     },
     setup: [
-      'Install: `npx openclaw install endaoment`',
-      'Configure Endaoment API credentials',
-      'Set donor wallet address',
-      'Verify target organizations via EIN lookup',
+      'Install: `npx skills add endaoment`',
+      'Requires Bankr skill with API key configured',
+      'Fund wallet with USDC on Base',
+      'Search charities by EIN or name, then donate',
     ],
     securityFindings: [
       {
@@ -273,25 +205,25 @@ console.log(\`Tax receipt: \${donation.receiptUrl}\`);`,
     description:
       'ENS name management — set and configure primary names, update avatars, manage reverse resolution across L1 and L2 networks.',
     demo: {
-      title: 'set-primary.ts',
-      language: 'typescript',
-      code: `// Set primary ENS name
-await ens.setPrimary({
-  name: "myname.eth",
-  address: "0xYourAddress..."
-});
+      title: 'set-primary.sh',
+      language: 'bash',
+      code: `# Set primary ENS name on Base
+./scripts/set-primary.sh myname.eth
 
-// Update avatar
-await ens.setAvatar({
-  name: "myname.eth",
-  avatar: "https://example.com/avatar.png"
-});`,
+# Set on any supported L2
+./scripts/set-primary.sh myname.eth arbitrum
+
+# Verify it worked
+./scripts/verify-primary.sh 0xYourAddr base
+
+# Set avatar (L1 only, supports HTTPS/IPFS/NFT)
+./scripts/set-avatar.sh myname.eth ipfs://QmHash`,
     },
     setup: [
-      'Install: `npx openclaw install ens-primary-name`',
-      'Configure Ethereum RPC endpoint',
+      'Install: `npx skills add ens-primary-name`',
+      'Requires Bankr CLI: `npm install -g @bankr/cli`',
       'Ensure wallet owns the target ENS name',
-      'Fund wallet with ETH for gas (L1 operations)',
+      'Fund wallet with ETH for gas on target chain',
     ],
     securityFindings: [
       {
@@ -325,23 +257,24 @@ await ens.setAvatar({
     demo: {
       title: 'register-agent.ts',
       language: 'typescript',
-      code: `// Register a new agent identity
-const agentNFT = await erc8004.register({
-  name: "TradingBot-v2",
-  capabilities: ["swap", "bridge", "transfer"],
-  metadata: {
-    version: "2.0.0",
-    trustScore: 95
-  }
+      code: `import { SDK } from "agent0-sdk";
+
+const sdk = new SDK({
+  chainId: 1,
+  privateKey: process.env.PRIVATE_KEY,
+  ipfs: "pinata",
+  pinataJwt: process.env.PINATA_JWT,
 });
 
-console.log(\`Agent ID: \${agentNFT.tokenId}\`);`,
+// Register agent on Ethereum (mints ERC-721)
+const agent = sdk.createAgent("MyBot", "AI trading agent");
+const { agentId } = await agent.registerIPFS();`,
     },
     setup: [
-      'Install: `npx openclaw install erc-8004`',
-      'Deploy or connect to ERC-8004 registry contract',
-      'Configure agent metadata schema',
-      'Fund wallet for registration gas fees',
+      'Install: `npx skills add erc-8004`',
+      'Get Pinata JWT for IPFS uploads (or use HTTP URL)',
+      'Bridge ETH to mainnet: `./scripts/bridge-to-mainnet.sh 0.01`',
+      'Register: `./scripts/register.sh`',
     ],
     securityFindings: [
       {
@@ -382,21 +315,27 @@ console.log(\`Agent ID: \${agentNFT.tokenId}\`);`,
     description:
       'React component library for on-chain interactions — wallet connectors, swap widgets, identity components, and NFT displays built for Base.',
     demo: {
-      title: 'swap-widget.tsx',
+      title: 'onchain-app.tsx',
       language: 'tsx',
-      code: `import { SwapWidget } from '@coinbase/onchainkit';
+      code: `import { Swap, SwapAmountInput, SwapButton }
+  from '@coinbase/onchainkit/swap';
+import { Wallet, ConnectWallet }
+  from '@coinbase/onchainkit/wallet';
+import { Identity, Avatar, Name }
+  from '@coinbase/onchainkit/identity';
 
-// Drop-in swap component
-export function TokenSwap() {
-  return (
-    <SwapWidget
-      from="ETH"
-      to="USDC"
-      chain="base"
-      theme="dark"
-    />
-  );
-}`,
+// Composable on-chain components
+<Wallet><ConnectWallet /></Wallet>
+
+<Identity address={addr}>
+  <Avatar /><Name />
+</Identity>
+
+<Swap>
+  <SwapAmountInput label="Sell" type="from" />
+  <SwapAmountInput label="Buy" type="to" />
+  <SwapButton />
+</Swap>`,
     },
     setup: [
       'Install: `npm install @coinbase/onchainkit`',
@@ -425,25 +364,21 @@ export function TokenSwap() {
     description:
       'QR code auction game — scan QR codes to place bids in on-chain auctions with unique token mechanics.',
     demo: {
-      title: 'place-bid.ts',
-      language: 'typescript',
-      code: `// Scan and bid on a QR auction
-const auction = await qrcoin.scan({
-  qrData: "qrcoin://auction/42"
-});
+      title: 'qr-bid.sh',
+      language: 'bash',
+      code: `# Bid to display your URL on a QR code (~11 USDC)
+bankr prompt "Send tx to 0x7309...A176 on Base \\
+  calling createBid(329, 'https://mysite.com', 'MyBot')"
 
-await qrcoin.bid({
-  auctionId: auction.id,
-  amount: "0.01 ETH"
-});
-
-console.log(\`Bid placed on "\${auction.title}"\`);`,
+# Boost an existing bid (~1 USDC per contribution)
+bankr prompt "Send tx to 0x7309...A176 on Base \\
+  calling contributeToBid(329, 'https://mysite.com', 'MyBot')"`,
     },
     setup: [
-      'Install: `npx openclaw install qrcoin`',
-      'Configure wallet for bidding',
-      'Enable camera access for QR scanning',
-      'Fund wallet with ETH for bids + gas',
+      'Install: `npx skills add qrcoin`',
+      'Requires Bankr skill for transaction execution',
+      'Fund wallet with USDC on Base for bids',
+      'Query `currentTokenId()` to get active auction ID',
     ],
     securityFindings: [
       {
@@ -462,30 +397,27 @@ console.log(\`Bid placed on "\${auction.title}"\`);`,
     slug: 'veil',
     name: 'Veil',
     provider: 'Veil',
-    providerUrl: 'https://veil.exchange',
+    providerUrl: 'https://veil.cash',
     description:
       'Privacy-preserving transactions — deposit into shielded pools, perform ZK withdrawals, and manage private transfers with zero-knowledge proofs.',
     demo: {
-      title: 'private-transfer.ts',
-      language: 'typescript',
-      code: `// Deposit into privacy pool
-await veil.deposit({
-  amount: "1 ETH",
-  pool: "base-eth-pool"
-});
+      title: 'veil-privacy.sh',
+      language: 'bash',
+      code: `# Deposit ETH into privacy pool via Bankr
+scripts/veil-deposit-via-bankr.sh 0.011 \\
+  --address 0xYourBankrAddress
 
-// Private withdrawal with ZK proof
-await veil.withdraw({
-  amount: "0.5 ETH",
-  recipient: "0xRecipient...",
-  generateProof: true
-});`,
+# Private withdrawal with ZK proof
+scripts/veil-withdraw.sh 0.007 0xNewAddress
+
+# Check all balances (public + private + queue)
+scripts/veil-balance.sh --address 0xYourAddress`,
     },
     setup: [
-      'Install: `npx openclaw install veil`',
-      'Generate a Veil keypair: `npx veil keygen`',
-      'Configure privacy pool endpoints',
-      'Fund wallet for initial deposit',
+      'Install SDK: `npm install -g @veil-cash/sdk`',
+      'Install skill: `npx skills add veil`',
+      'Generate keypair: `scripts/veil-keypair.sh`',
+      'Configure RPC in `~/.clawdbot/skills/veil/.env`',
     ],
     securityFindings: [
       {
@@ -517,22 +449,22 @@ await veil.withdraw({
     description:
       'Social on-chain game — "yoink" a token from the current holder. Uses Bankr for transaction execution. Pure entertainment.',
     demo: {
-      title: 'yoink.ts',
-      language: 'typescript',
-      code: `// Yoink the token!
-const result = await yoink.grab({
-  gameId: "yoink-main",
-  message: "mine now 😈"
-});
+      title: 'yoink.sh',
+      language: 'bash',
+      code: `# Yoink the flag! (raw contract call via Bankr)
+bankr prompt 'Submit this transaction:
+  {"to":"0x4bBFD120d9f352A0BEd7a014bd67913a2007a878",
+   "data":"0x9846cd9e","value":"0","chainId":8453}'
 
-console.log(\`Yoinked from \${result.previousHolder}\`);
-console.log(\`Hold time: \${result.holdDuration}\`);`,
+# Check who holds the flag
+bankr prompt "Call lastYoinkedBy() on \\
+  0x4bBFD120d9f352A0BEd7a014bd67913a2007a878 on Base"`,
     },
     setup: [
-      'Install: `npx openclaw install yoink`',
+      'Install: `npx skills add yoink`',
       'Requires Bankr skill for transaction execution',
-      'Connect wallet to the Yoink game contract',
-      'Ready to yoink!',
+      'Fund wallet with ETH on Base for gas',
+      'Wait 10 min cooldown between yoinks',
     ],
     securityFindings: [
       {
@@ -555,25 +487,25 @@ console.log(\`Hold time: \${result.holdDuration}\`);`,
     description:
       'Full Farcaster API integration — post casts, like, recast, follow users, search content, and manage Farcaster identities programmatically.',
     demo: {
-      title: 'post-cast.ts',
-      language: 'typescript',
-      code: `// Post a cast to Farcaster
-await neynar.cast({
-  text: "gm from my OpenClaw agent! 🌅",
-  channel: "gm"
-});
+      title: 'neynar-cli.sh',
+      language: 'bash',
+      code: `# Post a cast to Farcaster
+scripts/neynar.sh post "gm farcaster" --channel gm
 
-// Search for casts
-const results = await neynar.search({
-  query: "openclaw",
-  limit: 10
-});`,
+# Look up any user
+scripts/neynar.sh user vitalik.eth
+
+# Search casts
+scripts/neynar.sh search "ethereum" --limit 10
+
+# Read channel feed
+scripts/neynar.sh feed --channel base`,
     },
     setup: [
-      'Install: `npx openclaw install neynar`',
-      'Get Neynar API key from dashboard',
-      'Set `NEYNAR_API_KEY` environment variable',
-      'Authenticate your Farcaster signer',
+      'Install: `npx skills add neynar`',
+      'Get API key from [dev.neynar.com](https://dev.neynar.com)',
+      'Set `NEYNAR_API_KEY` in config',
+      'Set up signer UUID for write operations (posting, liking)',
     ],
     securityFindings: [
       {
