@@ -16,6 +16,9 @@ export const metadata: Metadata = {
   title: 'Bankr Skills — Plug-and-Play Tools for Agents',
   description:
     'Bankr Skills equip builders with plug-and-play tools to build more powerful agents. Browse skills with security audit results.',
+  icons: {
+    icon: '/bnkr.svg',
+  },
 };
 
 export default function RootLayout({
