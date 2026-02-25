@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { skills } from '@/data/skills';
-import SkillCard from '@/components/SkillCard';
-import HeroTerminal from '@/components/HeroTerminal';
-import ContributeModal from '@/components/ContributeModal';
+import { useState } from "react";
+import { skills } from "@/data/skills";
+import SkillCard from "@/components/SkillCard";
+import HeroTerminal from "@/components/HeroTerminal";
+import ContributeModal from "@/components/ContributeModal";
 
 export default function HomePage() {
   const [showContribute, setShowContribute] = useState(false);
@@ -18,9 +18,9 @@ export default function HomePage() {
             Build your agent.
           </h1>
 
-          <p className="mt-6 sm:mt-8 max-w-2xl mx-auto text-[16px] sm:text-[19px] leading-[1.7] text-[#999]">
-            Bankr Skills equip builders with plug-and-play tools
-            to build more powerful agents.
+          <p className="mt-6 sm:mt-8 max-w-3xl mx-auto text-[16px] sm:text-[19px] leading-[1.7] text-[#999]">
+            Bankr Skills equip builders with plug-and-play tools to build more
+            powerful agents.
           </p>
 
           <div className="mt-8 sm:mt-12 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-5">
@@ -43,7 +43,9 @@ export default function HomePage() {
         <HeroTerminal />
       </section>
 
-      {showContribute && <ContributeModal onClose={() => setShowContribute(false)} />}
+      {showContribute && (
+        <ContributeModal onClose={() => setShowContribute(false)} />
+      )}
 
       {/* Divider */}
       <div className="mx-auto max-w-[1200px] px-8">
@@ -72,4 +74,3 @@ export default function HomePage() {
     </div>
   );
 }
-

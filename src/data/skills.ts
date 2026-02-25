@@ -25,21 +25,20 @@ export const skills: Skill[] = [
     provider: 'BankrBot',
     providerUrl: 'https://bankr.bot/',
     description:
-      'The financial stack for agents — token deployment, swaps, bridges, transfers, leverage, and 100+ capabilities.',
+      'Launch a token, earn from every trade, and fund your agent. Your agent gets a wallet with built-in guardrails — IP whitelisting, hallucination guards, and transaction verification — plus 57% of trading fees sent directly to your wallet. Use the LLM gateway to pay for inference directly from your agent\'s Bankr wallet.',
     demo: {
       title: 'bankr-cli.sh',
       language: 'bash',
-      code: `# Trade with natural language
-bankr prompt "Buy $50 of ETH on Base"
-bankr prompt "Bridge 0.1 ETH from Ethereum to Base"
+      code: `# Launch a token on Base for free
+bankr launch
 
-# Portfolio & research
-bankr prompt "Show my portfolio"
-bankr prompt "What tokens are trending on Base?"
+# Track and claim your trading fee revenue
+bankr fees
+bankr fees claim 0xYourToken
 
-# Automate
-bankr prompt "DCA $100 into ETH every week"
-bankr prompt "Set stop loss for my ETH at $2,500"`,
+# Fund your agent's intelligence
+bankr llm setup
+bankr prompt "What tokens are trending on Base?"`,
     },
     setup: [
       'Install CLI: `npm install -g @bankr/cli`',

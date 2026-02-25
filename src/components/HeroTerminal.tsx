@@ -1,19 +1,19 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 const skillSlugs = [
-  'bankr',
-  'erc-8004',
-  'botchan',
-  'onchainkit',
-  'endaoment',
-  'ens-primary-name',
-  'qrcoin',
-  'veil',
-  'bankr-signals',
-  'yoink',
-  'neynar',
+  "bankr",
+  "erc-8004",
+  "botchan",
+  "onchainkit",
+  "endaoment",
+  "ens-primary-name",
+  "qrcoin",
+  "veil",
+  "bankr-signals",
+  "yoink",
+  "neynar",
 ];
 
 export default function HeroTerminal() {
@@ -38,7 +38,9 @@ export default function HeroTerminal() {
           <span className="h-3 w-3 rounded-full bg-[#ff5f57]" />
           <span className="h-3 w-3 rounded-full bg-[#febc2e]" />
           <span className="h-3 w-3 rounded-full bg-[#28c840]" />
-          <span className="ml-3 text-[13px] font-mono text-neutral-400">claude</span>
+          <span className="ml-3 text-[13px] font-mono text-neutral-400">
+            openclaw
+          </span>
         </div>
         <div className="px-4 sm:px-6 py-6 sm:py-8 font-mono text-[13px] sm:text-[15px] leading-[2.2] text-[#333] overflow-x-auto">
           <p className="whitespace-nowrap">
@@ -47,13 +49,17 @@ export default function HeroTerminal() {
             <span
               className={`inline-block rounded-lg bg-[#a88bfb] px-3 py-0.5 text-white transition-all duration-200 ${
                 isAnimating
-                  ? 'opacity-0 translate-y-1'
-                  : 'opacity-100 translate-y-0'
+                  ? "opacity-0 translate-y-1"
+                  : "opacity-100 translate-y-0"
               }`}
             >
               {skillSlugs[index]}
             </span>
-            <span> skill from https://github.com/BankrBot/openclaw-skills/tree/main/{skillSlugs[index]}</span>
+            <span>
+              {" "}
+              skill from https://github.com/BankrBot/openclaw-skills/tree/main/
+              {skillSlugs[index]}
+            </span>
           </p>
         </div>
       </div>
