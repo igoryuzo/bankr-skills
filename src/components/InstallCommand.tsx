@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 export default function InstallCommand({ slug }: { slug: string }) {
   const [copied, setCopied] = useState(false);
-  const command = `npx skills add https://github.com/bankrbot/openclaw-skills --skill ${slug}`;
+  const command = `npx skills add https://github.com/BankrBot/openclaw-skills/tree/main/${slug}`;
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(command);

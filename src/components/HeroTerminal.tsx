@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 
 const skillSlugs = [
-  'bankr',
   'erc-8004',
   'botchan',
   'onchainkit',
@@ -43,7 +42,7 @@ export default function HeroTerminal() {
         <div className="px-6 py-8 font-mono text-[15px] leading-[2.2] text-[#333]">
           <p className="whitespace-nowrap">
             <span className="text-neutral-400">$ </span>
-            <span>npx skills add https://github.com/bankrbot/openclaw-skills --skill{' '}</span>
+            <span>npx skills add https://github.com/BankrBot/openclaw-skills/tree/main/</span>
             <span
               className={`inline-block rounded-lg bg-[#a88bfb] px-3 py-0.5 text-white transition-all duration-200 ${
                 isAnimating
