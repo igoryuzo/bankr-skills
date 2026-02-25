@@ -26,7 +26,7 @@ export default function HomePage() {
           <div className="mt-8 sm:mt-12 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-5">
             <button
               onClick={() => setShowContribute(true)}
-              className="w-full sm:w-auto rounded-lg bg-[#2d2d2d] px-10 py-3.5 text-[13px] font-mono font-semibold uppercase tracking-[0.1em] text-white hover:bg-[#404040] transition-colors text-center cursor-pointer"
+              className="w-full sm:w-auto rounded-lg bg-[#a88bfb] px-10 py-3.5 text-[13px] font-mono font-semibold uppercase tracking-[0.1em] text-white hover:bg-[#9678f0] transition-colors text-center cursor-pointer"
             >
               Create Skill
             </button>
