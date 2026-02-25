@@ -23,7 +23,7 @@ export default function SkillPage() {
         <meta name="description" content={skill.description} />
       </Helmet>
 
-      <div className="mx-auto max-w-4xl px-6 py-12">
+      <div className="mx-auto max-w-4xl px-4 sm:px-6 py-8 sm:py-12">
         {/* Back link */}
         <Link
           to="/"
@@ -47,13 +47,13 @@ export default function SkillPage() {
 
         {/* Header */}
         <div className="mb-12">
-          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-[#1a1a1a] mb-4">
+          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[#1a1a1a] mb-4">
             {skill.name}
           </h1>
 
           {/* Skill Score */}
           <div className="flex items-center gap-3 mb-3">
-            <div className="inline-flex items-center gap-2.5 rounded-xl bg-white px-4 py-2.5 terminal-card">
+            <div className="inline-flex flex-wrap items-center gap-2.5 rounded-xl bg-white px-4 py-2.5 terminal-card">
               <span className="text-[10px] font-bold font-mono uppercase tracking-wider text-neutral-400">Skill Score</span>
               <span className={`text-2xl font-extrabold ${scoreColor}`}>{score}</span>
               <span className="text-xs font-mono text-neutral-300">/ 100</span>

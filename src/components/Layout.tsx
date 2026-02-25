@@ -3,14 +3,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen flex flex-col bg-[#f5f5f5] text-[#1a1a1a] antialiased">
       {/* Header */}
       <header className="bg-[#f5f5f5]">
-        <div className="mx-auto max-w-[1200px] px-8 h-20 flex items-center justify-between">
+        <div className="mx-auto max-w-[1200px] px-4 sm:px-8 h-16 sm:h-20 flex items-center justify-between">
           {/* Logo */}
           <a href="/" className="flex items-center">
-            <img src="/bankr-logo.svg" alt="Bankr" className="h-12 w-12" />
+            <img src="/bankr-logo.svg" alt="Bankr" className="h-10 w-10 sm:h-12 sm:w-12" />
           </a>
 
           {/* Nav */}
-          <nav className="flex items-center gap-4">
+          <nav className="hidden md:flex items-center gap-4">
             <a
               href="#"
               className="rounded-lg border border-neutral-300 px-5 py-2.5 text-[12px] font-mono font-semibold uppercase tracking-[0.12em] text-neutral-600 hover:bg-neutral-200/60 transition-colors"
@@ -42,7 +42,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <main className="flex-1">{children}</main>
 
       <footer className="border-t border-neutral-200/60 bg-[#f5f5f5]">
-        <div className="mx-auto max-w-[1200px] px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-neutral-400 font-mono">
+        <div className="mx-auto max-w-[1200px] px-4 sm:px-8 py-6 sm:py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-neutral-400 font-mono text-center sm:text-left">
           <p>Bankr Skill Scores are experimental. Always review skills before installing.</p>
           <div className="flex items-center gap-4">
             <a
