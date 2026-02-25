@@ -32,7 +32,7 @@ export default function HeroTerminal() {
   }, []);
 
   return (
-    <div className="mx-auto max-w-[880px] px-8 mt-14">
+    <div className="mx-auto max-w-[1200px] px-8 mt-14">
       <div className="terminal-card rounded-2xl bg-white overflow-hidden">
         <div className="flex items-center gap-2.5 px-6 py-4 border-b border-neutral-100">
           <span className="h-3 w-3 rounded-full bg-[#ff5f57]" />
