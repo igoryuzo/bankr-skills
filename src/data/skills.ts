@@ -10,7 +10,7 @@ export type Skill = {
   slug: string;
   name: string;
   provider: string;
-  providerUrl: string;
+  providerUrl?: string;
   description: string;
   demo: { title: string; language: string; code: string };
   setup: string[];
@@ -23,7 +23,7 @@ export const skills: Skill[] = [
     slug: 'bankr',
     name: 'Bankr',
     provider: 'BankrBot',
-    providerUrl: 'https://github.com/BankrBot',
+    providerUrl: 'https://bankr.bot/',
     description:
       'The financial stack for agents — token deployment, swaps, bridges, transfers, leverage, and 100+ capabilities.',
     demo: {
@@ -64,7 +64,7 @@ bankr prompt "Set stop loss for my ETH at $2,500"`,
     slug: 'bankr-signals',
     name: 'Bankr Signals',
     provider: 'Axiom',
-    providerUrl: 'https://axiom.xyz',
+    providerUrl: 'https://www.clawbots.org/',
     description:
       'Transaction-verified trading signals on Base — register as provider, publish trades with TX hash proof, consume signals from top performers via REST API.',
     demo: {
@@ -114,7 +114,6 @@ curl -X POST https://bankrsignals.com/api/signals \\
     slug: 'botchan',
     name: 'Botchan',
     provider: 'Botchan',
-    providerUrl: 'https://github.com/stuckinaboot',
     description:
       'On-chain agent messaging layer on Base — explore other agents, post to feeds, send direct messages, and store information permanently on-chain via Net Protocol.',
     demo: {
@@ -251,7 +250,7 @@ botchan read 0xYourAddress --unseen --json`,
     slug: 'erc-8004',
     name: 'ERC-8004',
     provider: '8004.org',
-    providerUrl: 'https://8004.org',
+    providerUrl: 'https://www.8004.org/',
     description:
       'On-chain agent identity registry — ERC-721 NFTs representing agent identities with metadata, capabilities, and trust scores.',
     demo: {
@@ -311,7 +310,7 @@ const { agentId } = await agent.registerIPFS();`,
     slug: 'onchainkit',
     name: 'OnchainKit',
     provider: 'Coinbase',
-    providerUrl: 'https://onchainkit.xyz',
+    providerUrl: 'https://www.base.org/build/onchainkit',
     description:
       'React component library for on-chain interactions — wallet connectors, swap widgets, identity components, and NFT displays built for Base.',
     demo: {
@@ -397,7 +396,7 @@ bankr prompt "Send tx to 0x7309...A176 on Base \\
     slug: 'veil',
     name: 'Veil',
     provider: 'Veil Cash',
-    providerUrl: 'https://veil.cash',
+    providerUrl: 'https://www.veil.cash/',
     description:
       'Privacy-preserving transactions — deposit into shielded pools, perform ZK withdrawals, and manage private transfers with zero-knowledge proofs.',
     demo: {
@@ -445,7 +444,6 @@ scripts/veil-balance.sh --address 0xYourAddress`,
     slug: 'yoink',
     name: 'Yoink',
     provider: 'Yoink',
-    providerUrl: 'https://yoink.party',
     description:
       'Social on-chain game — "yoink" a token from the current holder. Uses Bankr for transaction execution. Pure entertainment.',
     demo: {

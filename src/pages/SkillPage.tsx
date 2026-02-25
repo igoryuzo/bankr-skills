@@ -68,14 +68,18 @@ export default function SkillPage() {
 
           <p className="mt-5 text-sm font-mono text-neutral-400">
             by{' '}
-            <a
-              href={skill.providerUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-neutral-600 hover:text-[#1a1a1a] underline underline-offset-4 decoration-neutral-300 hover:decoration-neutral-500 transition-colors"
-            >
-              {skill.provider}
-            </a>
+            {skill.providerUrl ? (
+              <a
+                href={skill.providerUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-neutral-600 hover:text-[#1a1a1a] underline underline-offset-4 decoration-neutral-300 hover:decoration-neutral-500 transition-colors"
+              >
+                {skill.provider}
+              </a>
+            ) : (
+              <span className="text-neutral-600">{skill.provider}</span>
+            )}
           </p>
           <p className="mt-4 text-neutral-500 leading-relaxed max-w-2xl">
             {skill.description}
