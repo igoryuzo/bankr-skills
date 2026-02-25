@@ -51,10 +51,10 @@ export default function SkillPage() {
             {skill.name}
           </h1>
 
-          {/* Skill Score */}
+          {/* Safety Score */}
           <div className="flex items-center gap-3 mb-3">
             <div className="inline-flex flex-wrap items-center gap-2.5 rounded-xl bg-white px-4 py-2.5 terminal-card">
-              <span className="text-[10px] font-bold font-mono uppercase tracking-wider text-neutral-400">Skill Score</span>
+              <span className="text-[10px] font-bold font-mono uppercase tracking-wider text-neutral-400">Safety Score</span>
               <span className={`text-2xl font-extrabold ${scoreColor}`}>{score}</span>
               <span className="text-xs font-mono text-neutral-300">/ 100</span>
               <span className="text-[9px] font-bold uppercase tracking-wider text-neutral-300 border border-neutral-200 rounded px-1.5 py-0.5">
@@ -121,7 +121,7 @@ export default function SkillPage() {
           <SectionHeading>Code Review</SectionHeading>
 
           <p className="text-sm text-neutral-400 font-mono mb-6 -mt-3">
-            Skill-generated notes. The Skill score is experimental. Always review skills before installing.
+            Skill-generated notes. The Safety score is experimental. Always review skills before installing.
           </p>
 
           {/* Priority summary pills */}

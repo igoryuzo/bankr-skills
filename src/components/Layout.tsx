@@ -43,7 +43,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
       <footer className="border-t border-neutral-200/60 bg-[#f5f5f5]">
         <div className="mx-auto max-w-[1200px] px-4 sm:px-8 py-6 sm:py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-neutral-400 font-mono text-center sm:text-left">
-          <p>Bankr Skill Scores are experimental. Always review skills before installing.</p>
+          <p>Bankr Safety Scores are experimental. Always review skills before installing.</p>
           <div className="flex items-center gap-4">
             <a
               href="https://github.com/BankrBot/openclaw-skills"
