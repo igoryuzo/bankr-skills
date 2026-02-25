@@ -1,15 +1,15 @@
-'use client';
-
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 import type { Skill } from '@/data/skills';
-import SecurityBadge from './SecurityBadge';
+import { getQualityScore } from '@/data/skills';
 
 export default function SkillCard({ skill }: { skill: Skill }) {
-  const findingCount = skill.securityFindings.length;
+  const score = getQualityScore(skill.securityFindings);
+  const scoreColor =
+    score >= 90 ? 'text-emerald-600' : score >= 75 ? 'text-amber-600' : 'text-orange-600';
 
   return (
     <Link
-      href={`/skills/${skill.slug}`}
+      to={`/skills/${skill.slug}`}
       className="group block rounded-2xl bg-white p-6 skill-card"
     >
       <div className="flex items-start justify-between gap-3">
@@ -19,7 +19,6 @@ export default function SkillCard({ skill }: { skill: Skill }) {
           </h3>
           <p className="mt-1 text-xs font-mono text-neutral-400">by {skill.provider}</p>
         </div>
-        <SecurityBadge rating={skill.overallRating} />
       </div>
 
       <p className="mt-4 text-sm leading-relaxed text-neutral-500 line-clamp-2">
@@ -27,8 +26,14 @@ export default function SkillCard({ skill }: { skill: Skill }) {
       </p>
 
       <div className="mt-5 flex items-center justify-between text-xs font-mono">
-        <span className="text-neutral-400 uppercase tracking-wider">
-          {findingCount} finding{findingCount !== 1 ? 's' : ''}
+        <span className="flex items-center gap-2">
+          <span className="flex items-center gap-1">
+            <span className={`text-sm font-extrabold ${scoreColor}`}>{score}</span>
+            <span className="text-neutral-300">/100</span>
+          </span>
+          <span className="text-[9px] font-bold uppercase tracking-wider text-neutral-300 border border-neutral-200 rounded px-1.5 py-0.5">
+            Experimental
+          </span>
         </span>
         <span className="text-neutral-400 group-hover:text-[#1a1a1a] transition-colors flex items-center gap-1 uppercase tracking-wider">
           View

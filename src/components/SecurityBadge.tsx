@@ -8,16 +8,16 @@ const config: Record<Rating, { label: string; bg: string; text: string; dot: str
     dot: 'bg-emerald-500',
   },
   warning: {
-    label: 'Warning',
+    label: 'Has Notes',
+    bg: 'bg-sky-50',
+    text: 'text-sky-700',
+    dot: 'bg-sky-400',
+  },
+  flagged: {
+    label: 'Needs Attention',
     bg: 'bg-amber-50',
     text: 'text-amber-700',
     dot: 'bg-amber-500',
-  },
-  flagged: {
-    label: 'Flagged',
-    bg: 'bg-red-50',
-    text: 'text-red-700',
-    dot: 'bg-red-500',
   },
 };
 

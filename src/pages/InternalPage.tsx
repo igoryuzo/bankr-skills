@@ -1,5 +1,3 @@
-'use client';
-
 import { useState } from 'react';
 
 const PASSWORD = 'gamalthecamel';
@@ -209,7 +207,7 @@ const bankrCapabilities = [
   'LLM Gateway (multi-model)',
 ];
 
-export default function AnalyzePage() {
+export default function InternalPage() {
   const [authenticated, setAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
   const [error, setError] = useState(false);

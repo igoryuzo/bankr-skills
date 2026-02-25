@@ -553,6 +553,17 @@ export function getSeverityCounts(findings: Finding[]) {
   };
 }
 
+export function getQualityScore(findings: Finding[]): number {
+  const deductions: Record<Finding['severity'], number> = {
+    critical: 25,
+    high: 15,
+    medium: 8,
+    low: 3,
+  };
+  const total = findings.reduce((acc, f) => acc + deductions[f.severity], 0);
+  return Math.max(0, 100 - total);
+}
+
 export function getAllFindings(): Finding[] {
   return skills.flatMap((s) => s.securityFindings);
 }

@@ -2,31 +2,35 @@ import type { Finding } from '@/data/skills';
 
 const severityConfig: Record<
   Finding['severity'],
-  { bg: string; text: string; badgeBg: string; border: string }
+  { label: string; bg: string; text: string; badgeBg: string; border: string }
 > = {
   critical: {
-    bg: 'bg-red-50/50',
-    text: 'text-red-700',
-    badgeBg: 'bg-red-100',
-    border: 'border-red-200/60',
+    label: 'High Priority',
+    bg: 'bg-rose-50/50',
+    text: 'text-rose-700',
+    badgeBg: 'bg-rose-100',
+    border: 'border-rose-200/60',
   },
   high: {
-    bg: 'bg-orange-50/50',
-    text: 'text-orange-700',
-    badgeBg: 'bg-orange-100',
-    border: 'border-orange-200/60',
-  },
-  medium: {
+    label: 'Medium Priority',
     bg: 'bg-amber-50/50',
     text: 'text-amber-700',
     badgeBg: 'bg-amber-100',
     border: 'border-amber-200/60',
   },
+  medium: {
+    label: 'Low Priority',
+    bg: 'bg-sky-50/50',
+    text: 'text-sky-700',
+    badgeBg: 'bg-sky-100',
+    border: 'border-sky-200/60',
+  },
   low: {
-    bg: 'bg-blue-50/50',
-    text: 'text-blue-700',
-    badgeBg: 'bg-blue-100',
-    border: 'border-blue-200/60',
+    label: 'Informational',
+    bg: 'bg-neutral-50/50',
+    text: 'text-neutral-500',
+    badgeBg: 'bg-neutral-100',
+    border: 'border-neutral-200/60',
   },
 };
 
@@ -39,7 +43,7 @@ export default function FindingCard({ finding }: { finding: Finding }) {
         <span
           className={`shrink-0 rounded-full px-3 py-1 text-[10px] font-bold font-mono uppercase tracking-wider ${s.text} ${s.badgeBg}`}
         >
-          {finding.severity}
+          {s.label}
         </span>
       </div>
 
