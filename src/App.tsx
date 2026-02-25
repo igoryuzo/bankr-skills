@@ -1,8 +1,12 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
 import Layout from './components/Layout';
 import HomePage from './pages/HomePage';
 import SkillPage from './pages/SkillPage';
-import InternalPage from './pages/InternalPage';
+
+const InternalPage = import.meta.env.DEV
+  ? lazy(() => import('./pages/InternalPage'))
+  : null;
 
 export default function App() {
   return (
@@ -13,7 +17,11 @@ export default function App() {
           <Route path="/skills/:slug" element={<SkillPage />} />
           <Route
             path="/internal"
-            element={import.meta.env.DEV ? <InternalPage /> : <Navigate to="/" replace />}
+            element={
+              InternalPage
+                ? <Suspense><InternalPage /></Suspense>
+                : <Navigate to="/" replace />
+            }
           />
         </Routes>
       </Layout>
