@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 
 const skillSlugs = [
+  'bankr',
   'erc-8004',
   'botchan',
   'onchainkit',
