@@ -1,8 +1,12 @@
+import { useState } from 'react';
 import { skills } from '@/data/skills';
 import SkillCard from '@/components/SkillCard';
 import HeroTerminal from '@/components/HeroTerminal';
+import ContributeModal from '@/components/ContributeModal';
 
 export default function HomePage() {
+  const [showContribute, setShowContribute] = useState(false);
+
   return (
     <div>
       {/* Hero */}
@@ -20,14 +24,12 @@ export default function HomePage() {
           </p>
 
           <div className="mt-8 sm:mt-12 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-5">
-            <a
-              href="https://github.com/BankrBot/openclaw-skills"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto rounded-lg bg-[#2d2d2d] px-10 py-3.5 text-[13px] font-mono font-semibold uppercase tracking-[0.1em] text-white hover:bg-[#404040] transition-colors text-center"
+            <button
+              onClick={() => setShowContribute(true)}
+              className="w-full sm:w-auto rounded-lg bg-[#2d2d2d] px-10 py-3.5 text-[13px] font-mono font-semibold uppercase tracking-[0.1em] text-white hover:bg-[#404040] transition-colors text-center cursor-pointer"
             >
-              GitHub Repo
-            </a>
+              Create Skill
+            </button>
             <a
               href="#skills"
               className="w-full sm:w-auto rounded-lg bg-[#2d2d2d] px-10 py-3.5 text-[13px] font-mono font-semibold uppercase tracking-[0.1em] text-white hover:bg-[#404040] transition-colors text-center"
@@ -40,6 +42,8 @@ export default function HomePage() {
         {/* Terminal */}
         <HeroTerminal />
       </section>
+
+      {showContribute && <ContributeModal onClose={() => setShowContribute(false)} />}
 
       {/* Divider */}
       <div className="mx-auto max-w-[1200px] px-8">
