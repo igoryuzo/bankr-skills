@@ -43,10 +43,6 @@ export default function HeroTerminal() {
         <div className="px-6 py-8 font-mono text-[15px] leading-[2.2] text-[#333]">
           <p className="whitespace-nowrap">
             <span className="text-neutral-400">$ </span>
-            <span>install the bankr skill from https://github.com/BankrBot/openclaw-skills/tree/main/bankr</span>
-          </p>
-          <p className="whitespace-nowrap">
-            <span className="text-neutral-400">$ </span>
             <span>install the </span>
             <span
               className={`inline-block rounded-lg bg-[#a88bfb] px-3 py-0.5 text-white transition-all duration-200 ${
