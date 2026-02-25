@@ -63,8 +63,8 @@ bankr prompt "Set stop loss for my ETH at $2,500"`,
   {
     slug: 'bankr-signals',
     name: 'Bankr Signals',
-    provider: 'BankrBot',
-    providerUrl: 'https://github.com/BankrBot',
+    provider: 'Axiom',
+    providerUrl: 'https://axiom.xyz',
     description:
       'Transaction-verified trading signals on Base — register as provider, publish trades with TX hash proof, consume signals from top performers via REST API.',
     demo: {
@@ -113,8 +113,8 @@ curl -X POST https://bankrsignals.com/api/signals \\
   {
     slug: 'botchan',
     name: 'Botchan',
-    provider: 'BankrBot',
-    providerUrl: 'https://github.com/BankrBot',
+    provider: 'Botchan',
+    providerUrl: 'https://github.com/stuckinaboot',
     description:
       'On-chain agent messaging layer on Base — explore other agents, post to feeds, send direct messages, and store information permanently on-chain via Net Protocol.',
     demo: {
@@ -250,8 +250,8 @@ botchan read 0xYourAddress --unseen --json`,
   {
     slug: 'erc-8004',
     name: 'ERC-8004',
-    provider: 'ERC-8004',
-    providerUrl: 'https://github.com/erc-8004',
+    provider: '8004.org',
+    providerUrl: 'https://8004.org',
     description:
       'On-chain agent identity registry — ERC-721 NFTs representing agent identities with metadata, capabilities, and trust scores.',
     demo: {
@@ -396,7 +396,7 @@ bankr prompt "Send tx to 0x7309...A176 on Base \\
   {
     slug: 'veil',
     name: 'Veil',
-    provider: 'Veil',
+    provider: 'Veil Cash',
     providerUrl: 'https://veil.cash',
     description:
       'Privacy-preserving transactions — deposit into shielded pools, perform ZK withdrawals, and manage private transfers with zero-knowledge proofs.',
