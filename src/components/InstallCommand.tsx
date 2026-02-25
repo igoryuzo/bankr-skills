@@ -15,7 +15,7 @@ export default function InstallCommand({ slug }: { slug: string }) {
   return (
     <div className="mt-4 flex items-center justify-between gap-4 rounded-xl bg-[#1a1a1a] px-5 py-3.5">
       <p className="font-mono text-sm text-neutral-300 truncate">
-        <span className="text-neutral-500">$ </span>
+        <span className="text-neutral-500">&gt; </span>
         {command}
       </p>
       <button

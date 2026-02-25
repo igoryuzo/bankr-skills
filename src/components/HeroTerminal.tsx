@@ -42,7 +42,7 @@ export default function HeroTerminal() {
         </div>
         <div className="px-4 sm:px-6 py-6 sm:py-8 font-mono text-[13px] sm:text-[15px] leading-[2.2] text-[#333] overflow-x-auto">
           <p className="whitespace-nowrap">
-            <span className="text-neutral-400">$ </span>
+            <span className="text-neutral-400">&gt; </span>
             <span>install the </span>
             <span
               className={`inline-block rounded-lg bg-[#a88bfb] px-3 py-0.5 text-white transition-all duration-200 ${
