@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import HomePage from './pages/HomePage';
 import SkillPage from './pages/SkillPage';
@@ -11,7 +11,10 @@ export default function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/skills/:slug" element={<SkillPage />} />
-          <Route path="/internal" element={<InternalPage />} />
+          <Route
+            path="/internal"
+            element={import.meta.env.DEV ? <InternalPage /> : <Navigate to="/" replace />}
+          />
         </Routes>
       </Layout>
     </BrowserRouter>
