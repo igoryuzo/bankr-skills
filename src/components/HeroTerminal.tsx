@@ -38,16 +38,16 @@ export default function HeroTerminal() {
           <span className="h-3 w-3 rounded-full bg-[#ff5f57]" />
           <span className="h-3 w-3 rounded-full bg-[#febc2e]" />
           <span className="h-3 w-3 rounded-full bg-[#28c840]" />
-          <span className="ml-3 text-[13px] font-mono text-neutral-400">bankr-cli</span>
+          <span className="ml-3 text-[13px] font-mono text-neutral-400">claude</span>
         </div>
         <div className="px-6 py-8 font-mono text-[15px] leading-[2.2] text-[#333]">
           <p className="whitespace-nowrap">
             <span className="text-neutral-400">$ </span>
-            <span>npx skills add https://github.com/BankrBot/openclaw-skills/tree/main/bankr</span>
+            <span>install the bankr skill from https://github.com/BankrBot/openclaw-skills/tree/main/bankr</span>
           </p>
           <p className="whitespace-nowrap">
             <span className="text-neutral-400">$ </span>
-            <span>npx skills add https://github.com/BankrBot/openclaw-skills/tree/main/</span>
+            <span>install the </span>
             <span
               className={`inline-block rounded-lg bg-[#a88bfb] px-3 py-0.5 text-white transition-all duration-200 ${
                 isAnimating
@@ -57,6 +57,7 @@ export default function HeroTerminal() {
             >
               {skillSlugs[index]}
             </span>
+            <span> skill from https://github.com/BankrBot/openclaw-skills/tree/main/{skillSlugs[index]}</span>
           </p>
         </div>
       </div>
