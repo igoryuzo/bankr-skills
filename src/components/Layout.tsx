@@ -12,25 +12,33 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           {/* Nav */}
           <nav className="hidden md:flex items-center gap-4">
             <a
-              href="#"
+              href="https://bankr.bot/launches"
+              target="_blank"
+              rel="noopener noreferrer"
               className="rounded-lg border border-neutral-300 px-5 py-2.5 text-[12px] font-mono font-semibold uppercase tracking-[0.12em] text-neutral-600 hover:bg-neutral-200/60 transition-colors"
             >
               Token Feed
             </a>
             <a
-              href="#"
+              href="https://bankr.bot/launches?launch=true"
+              target="_blank"
+              rel="noopener noreferrer"
               className="rounded-lg border border-neutral-300 px-5 py-2.5 text-[12px] font-mono font-semibold uppercase tracking-[0.12em] text-neutral-600 hover:bg-neutral-200/60 transition-colors"
             >
               Launch a Token
             </a>
             <a
-              href="#"
+              href="https://docs.bankr.bot"
+              target="_blank"
+              rel="noopener noreferrer"
               className="rounded-lg border border-neutral-300 px-5 py-2.5 text-[12px] font-mono font-semibold uppercase tracking-[0.12em] text-neutral-600 hover:bg-neutral-200/60 transition-colors"
             >
               Read Docs
             </a>
             <a
-              href="#"
+              href="https://bankr.bot/terminal"
+              target="_blank"
+              rel="noopener noreferrer"
               className="rounded-lg border border-neutral-300 px-5 py-2.5 text-[12px] font-mono font-semibold uppercase tracking-[0.12em] text-neutral-600 hover:bg-neutral-200/60 transition-colors"
             >
               Talk to Bankr
