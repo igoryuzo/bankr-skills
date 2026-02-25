@@ -27,6 +27,7 @@ export default function SkillCard({ skill }: { skill: Skill }) {
 
       <div className="mt-5 flex items-center justify-between text-xs font-mono">
         <span className="flex items-center gap-2">
+          <span className="text-[9px] font-bold uppercase tracking-wider text-neutral-400">Safety Score</span>
           <span className="flex items-center gap-1">
             <span className={`text-sm font-extrabold ${scoreColor}`}>{score}</span>
             <span className="text-neutral-300">/100</span>
