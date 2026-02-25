@@ -19,6 +19,7 @@ export type Skill = {
 };
 
 export const skills: Skill[] = [
+  // ─── Bankr ───────────────────────────────────────────────────────────────
   {
     slug: 'bankr',
     name: 'Bankr',
@@ -109,6 +110,606 @@ curl -X POST https://bankrsignals.com/api/signals \\
     ],
     overallRating: 'warning',
   },
+
+  // ─── Uniswap ─────────────────────────────────────────────────────────────
+  {
+    slug: 'uniswap-trading',
+    name: 'Uniswap Trading',
+    provider: 'Uniswap',
+    providerUrl: 'https://uniswap.org',
+    description:
+      'Integrate Uniswap swaps into frontends, backends, and smart contracts — V2/V3/V4 support via Trading API, Universal Router, or direct contract calls.',
+    demo: {
+      title: 'swap.ts',
+      language: 'typescript',
+      code: `import { createPublicClient, http } from 'viem';
+import { base } from 'viem/chains';
+
+// Fetch a swap quote from the Uniswap Trading API
+const quote = await fetch(
+  'https://trading-api.uniswap.org/v1/quote?' +
+  new URLSearchParams({
+    tokenIn: '0x4200000000000000000000000000000000000006', // WETH
+    tokenOut: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913', // USDC
+    amount: '1000000000000000000', // 1 ETH
+    type: 'EXACT_INPUT',
+    chainId: '8453',
+  })
+).then(r => r.json());
+
+// Execute via Universal Router
+const { calldata, value } = quote.routing.universalRouterCalldata;
+await walletClient.sendTransaction({ to: UNIVERSAL_ROUTER, data: calldata, value });`,
+    },
+    setup: [
+      'Install plugin: `/plugin install uniswap-trading`',
+      'Install viem: `npm install viem`',
+      'Configure RPC endpoint for your target chain',
+      'Trigger with: "Help me integrate Uniswap swaps into my app"',
+    ],
+    securityFindings: [
+      {
+        severity: 'medium',
+        title: 'Routing API Response Trusted Without Validation',
+        file: 'uniswap-trading/scripts/swap.ts',
+        description:
+          'Token addresses and calldata returned by the Trading API are used directly without on-chain verification. A compromised or spoofed API response could route funds to a malicious contract.',
+        recommendation:
+          'Verify token contract addresses on-chain before execution. Validate Universal Router address against a hardcoded allowlist per chain.',
+      },
+      {
+        severity: 'low',
+        title: 'Slippage Settings Persisted in Unencrypted Storage',
+        file: 'uniswap-trading/scripts/config.ts',
+        description:
+          'User slippage preferences are stored in localStorage or plaintext config files. A compromised client environment could modify these values to increase MEV exposure.',
+        recommendation:
+          'Enforce minimum slippage validation at execution time regardless of stored settings.',
+      },
+    ],
+    overallRating: 'warning',
+  },
+  {
+    slug: 'uniswap-hooks',
+    name: 'Uniswap Hooks',
+    provider: 'Uniswap',
+    providerUrl: 'https://uniswap.org',
+    description:
+      'Security-first assistance for building Uniswap v4 hooks — threat modeling, permission flags analysis, NoOp attack prevention, delta accounting, and pre-deployment audit checklists.',
+    demo: {
+      title: 'CustomFeeHook.sol',
+      language: 'solidity',
+      code: `// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
+
+import {BaseHook} from "v4-periphery/src/base/hooks/BaseHook.sol";
+import {Hooks} from "v4-core/src/libraries/Hooks.sol";
+import {IPoolManager} from "v4-core/src/interfaces/IPoolManager.sol";
+import {PoolKey} from "v4-core/src/types/PoolKey.sol";
+import {BeforeSwapDelta} from "v4-core/src/types/BeforeSwapDelta.sol";
+
+contract CustomFeeHook is BaseHook {
+    function getHookPermissions()
+        public pure override returns (Hooks.Permissions memory)
+    {
+        return Hooks.Permissions({
+            beforeSwap: true,        // ✓ needed
+            afterSwap: false,        // ✗ minimize flags
+            beforeSwapReturnDelta: false, // ✗ avoid unless necessary
+            // ... all other flags false
+        });
+    }
+
+    function beforeSwap(address, PoolKey calldata key,
+        IPoolManager.SwapParams calldata, bytes calldata)
+        external override returns (bytes4, BeforeSwapDelta, uint24)
+    {
+        // Access-control: only PoolManager can call
+        return (BaseHook.beforeSwap.selector, toBeforeSwapDelta(0, 0), 3000);
+    }
+}`,
+    },
+    setup: [
+      'Install plugin: `/plugin install uniswap-hooks`',
+      'Start with security foundations: `/v4-security-foundations`',
+      'Ask: "What are the risks of beforeSwapReturnDelta?"',
+      'Review the 14-flag permission matrix before deploying',
+    ],
+    securityFindings: [
+      {
+        severity: 'high',
+        title: 'NoOp Delta Imbalance Exploit Risk',
+        file: 'uniswap-hooks/skill.md',
+        description:
+          'Hooks using beforeSwapReturnDelta or afterSwapReturnDelta without proper delta accounting can create imbalanced deltas that drain pool reserves. This is a known v4-specific attack vector.',
+        recommendation:
+          'Complete the v4-security-foundations skill before implementing delta-returning hooks. Audit all delta paths with a formal accounting proof.',
+      },
+      {
+        severity: 'medium',
+        title: 'Excess Permission Flags Increase Attack Surface',
+        file: 'uniswap-hooks/skill.md',
+        description:
+          'Registering hook permission flags that are not strictly required broadens the attack surface. Unused flags still accept calls, meaning future code changes could inadvertently activate dangerous callbacks.',
+        recommendation:
+          'Apply the principle of least privilege — only enable the minimum permission flags required. Audit each flag against actual hook logic.',
+      },
+    ],
+    overallRating: 'flagged',
+  },
+  {
+    slug: 'uniswap-viem',
+    name: 'Uniswap Viem',
+    provider: 'Uniswap',
+    providerUrl: 'https://uniswap.org',
+    description:
+      'EVM blockchain integration using viem and wagmi — wallet connection, contract reads/writes, real-time event subscriptions, multicall, and multi-chain support.',
+    demo: {
+      title: 'viem-setup.ts',
+      language: 'typescript',
+      code: `import { createPublicClient, createWalletClient, http, webSocket }
+  from 'viem';
+import { privateKeyToAccount } from 'viem/accounts';
+import { base } from 'viem/chains';
+
+// Read data
+const publicClient = createPublicClient({
+  chain: base,
+  transport: http('https://mainnet.base.org'),
+});
+
+const balance = await publicClient.getBalance({ address: '0x...' });
+const result = await publicClient.readContract({
+  address: '0x...', abi, functionName: 'totalSupply',
+});
+
+// Watch events in real-time
+publicClient.watchContractEvent({
+  address: '0x...', abi, eventName: 'Transfer',
+  onLogs: (logs) => console.log(logs),
+});`,
+    },
+    setup: [
+      'Install plugin: `/plugin install uniswap-viem`',
+      'Install viem: `npm install viem`',
+      'Trigger with: "Help me read a contract with viem"',
+      'For React frontends, also install wagmi: `npm install wagmi`',
+    ],
+    securityFindings: [
+      {
+        severity: 'medium',
+        title: 'Private Key Loaded from Environment Without Validation',
+        file: 'uniswap-viem/scripts/wallet.ts',
+        description:
+          'Example scripts load private keys directly from process.env without format validation. Malformed or accidentally swapped environment variables could cause unintended transaction signing.',
+        recommendation:
+          'Validate private key format (0x-prefixed, 64 hex chars) before use. Prefer hardware wallet or OS keychain integration over raw environment variables.',
+      },
+      {
+        severity: 'low',
+        title: 'WebSocket Transport Silent Reconnect',
+        file: 'uniswap-viem/scripts/transport.ts',
+        description:
+          'WebSocket transports reconnect automatically on disconnect without re-authenticating. A dropped connection could silently route to a different provider, changing the data source mid-operation.',
+        recommendation:
+          'Log and alert on transport reconnects. Verify provider identity after reconnection for sensitive operations.',
+      },
+    ],
+    overallRating: 'warning',
+  },
+  {
+    slug: 'uniswap-cca',
+    name: 'Uniswap CCA',
+    provider: 'Uniswap',
+    providerUrl: 'https://uniswap.org',
+    description:
+      'Configure and deploy Continuous Clearing Auction (CCA) smart contracts — guided parameter setup, convex supply schedule generation, Q96 price calculations, and multi-chain CREATE2 deployment.',
+    demo: {
+      title: 'cca-deploy.sh',
+      language: 'bash',
+      code: `# Step 1: Configure your auction parameters
+/configurator
+# > Token address: 0xYourToken
+# > Total supply: 1000000
+# > Auction duration: 72 hours
+# > Start price (USD): 0.10
+# > End price (USD): 0.01
+# > Network: base (chainId 8453)
+# ✓ Supply schedule generated (convex curve α=1.2)
+# ✓ Q96 prices calculated
+# ✓ Config saved: cca-config.json
+
+# Step 2: Review and deploy
+/deployer
+# > Config: cca-config.json
+# ✓ Validated against factory 0xCCccCcCAE...
+# Foundry script generated — review before signing`,
+    },
+    setup: [
+      'Install plugin: `/plugin install uniswap-cca`',
+      'Requires Python 3.10+ for MCP supply schedule server',
+      'Run `/configurator` to set auction parameters',
+      'Run `/deployer` and test on Sepolia before mainnet',
+    ],
+    securityFindings: [
+      {
+        severity: 'high',
+        title: 'Plugin Provided for Educational Use Only',
+        file: 'uniswap-cca/DISCLAIMER.md',
+        description:
+          'The CCA plugin explicitly states it is provided for educational purposes. The automated supply schedule generator and price calculators have not been independently audited. Real-asset auctions deployed from generated configs carry unquantified risk.',
+        recommendation:
+          'Always test on a testnet first. Have all auction configurations and contract deployments independently audited before using real funds.',
+      },
+      {
+        severity: 'medium',
+        title: 'Factory Address Hardcoded Without Chain Validation',
+        file: 'uniswap-cca/scripts/deploy.ts',
+        description:
+          'The CREATE2 factory address is hardcoded but the script does not verify the factory bytecode at that address on the target chain before deployment. A misconfigured chain could silently deploy to a different contract.',
+        recommendation:
+          'Verify the factory contract bytecode hash on-chain before each deployment. Reject unrecognized factory contracts.',
+      },
+    ],
+    overallRating: 'flagged',
+  },
+  {
+    slug: 'uniswap-driver',
+    name: 'Uniswap Driver',
+    provider: 'Uniswap',
+    providerUrl: 'https://uniswap.org',
+    description:
+      'Plan Uniswap swaps and liquidity positions then execute via deep links — verify tokens on-chain, research market conditions, and generate pre-filled Uniswap interface URLs across 12 chains.',
+    demo: {
+      title: 'swap-planner.sh',
+      language: 'bash',
+      code: `# Plan a swap — AI researches tokens and builds the link
+"Swap 1 ETH for USDC on Base"
+# ✓ Verified WETH: 0x4200...0006 (Base, official)
+# ✓ Verified USDC: 0x8335...a02913 (Base, Circle)
+# ✓ Current rate: ~3,240 USDC per ETH
+# → https://app.uniswap.org/swap?inputCurrency=...
+
+# Plan a liquidity position
+"Provide $500 of ETH/USDC liquidity on Base V3"
+# ✓ Pool: 0.05% fee tier, TVL $12.4M
+# ✓ Current price: 3,240 USDC/ETH
+# ✓ Suggested range: 2,800–3,700 USDC
+# → https://app.uniswap.org/add/...`,
+    },
+    setup: [
+      'Install plugin: `/plugin install uniswap-driver`',
+      'Trigger with: "Swap ETH for USDC on Base" or "Add liquidity"',
+      'Review the generated deep link before clicking',
+      'Execute through the Uniswap web interface — no autonomous transactions',
+    ],
+    securityFindings: [
+      {
+        severity: 'low',
+        title: 'Deep Links Expose Swap Parameters in URL',
+        file: 'uniswap-driver/scripts/planner.ts',
+        description:
+          'Generated deep links encode token addresses, amounts, and recipient addresses in the URL. These URLs may be logged by browsers, proxies, or analytics tools, leaking trade intent.',
+        recommendation:
+          'Avoid sharing generated links in untrusted channels. Use private browsing when following deep links for sensitive trades.',
+      },
+      {
+        severity: 'low',
+        title: 'Web Search Token Research Not Cryptographically Verified',
+        file: 'uniswap-driver/scripts/research.ts',
+        description:
+          'Token identity research relies on web search results which could be manipulated via SEO or sponsored results. A scam token could appear legitimate in search data.',
+        recommendation:
+          'Always cross-reference token addresses against official project documentation and on-chain data before executing swaps.',
+      },
+    ],
+    overallRating: 'clean',
+  },
+
+  // ─── Base ─────────────────────────────────────────────────────────────────
+  {
+    slug: 'base-account',
+    name: 'Base Account',
+    provider: 'Base',
+    providerUrl: 'https://base.org',
+    description:
+      'ERC-4337 smart wallet integration — Sign in with Base, one-tap USDC payments, gas sponsorship via paymasters, sub accounts, and spend permissions across 9 chains.',
+    demo: {
+      title: 'base-account.ts',
+      language: 'typescript',
+      code: `import { createBaseAccountSDK } from '@base-org/account';
+import { BasePayButton } from '@base-org/account-ui';
+
+// Initialize SDK
+const sdk = createBaseAccountSDK({
+  appName: 'My App',
+  appLogoUrl: 'https://myapp.com/logo.png',
+  appChainIds: [8453], // Base Mainnet
+});
+
+// Sign in with Base (generate nonce BEFORE user click)
+const nonce = await generateNonce(); // server-side
+const { address, token } = await sdk.signIn({ nonce });
+
+// One-tap USDC payment
+<BasePayButton
+  chargeHandler={async () => ({
+    id: crypto.randomUUID(),
+    callData: { recipientAddress: '0x...', amount: '5000000' }, // $5 USDC
+  })}
+  onSuccess={({ paymentId }) => console.log('Paid:', paymentId)}
+/>`,
+    },
+    setup: [
+      'Install: `npm install @base-org/account @base-org/account-ui`',
+      'Set `Cross-Origin-Opener-Policy: same-origin-allow-popups` on your server',
+      'Generate nonces server-side before user clicks Sign in',
+      'Use proxy to protect Paymaster URLs from client-side exposure',
+    ],
+    securityFindings: [
+      {
+        severity: 'high',
+        title: 'Paymaster URL Exposed Client-Side',
+        file: 'base-account/scripts/paymaster.ts',
+        description:
+          'Paymaster sponsorship URLs embedded in frontend code can be extracted from the browser and abused to sponsor arbitrary transactions, draining the sponsorship budget.',
+        recommendation:
+          'Always proxy Paymaster requests through a backend. Never embed Paymaster URLs or credentials directly in client-side code.',
+      },
+      {
+        severity: 'medium',
+        title: 'Missing Transaction ID Replay Protection',
+        file: 'base-account/scripts/payment.ts',
+        description:
+          'Payment verification flows that do not track transaction IDs can be replayed. An attacker could re-submit a valid payment callback to credit an account multiple times.',
+        recommendation:
+          'Track all transaction IDs server-side and reject duplicate payment confirmations. Implement idempotency checks at the API layer.',
+      },
+    ],
+    overallRating: 'flagged',
+  },
+  {
+    slug: 'base-network',
+    name: 'Base Network',
+    provider: 'Base',
+    providerUrl: 'https://base.org',
+    description:
+      'Base Mainnet and Sepolia network configuration — RPC endpoints, chain IDs, explorer URLs, and wallet setup for Base blockchain development.',
+    demo: {
+      title: 'network-config.ts',
+      language: 'typescript',
+      code: `import { defineChain } from 'viem';
+
+// Base Mainnet
+export const base = defineChain({
+  id: 8453,
+  name: 'Base',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: { http: ['https://mainnet.base.org'] },
+  },
+  blockExplorers: {
+    default: { name: 'Basescan', url: 'https://basescan.org' },
+  },
+});
+
+// Base Sepolia Testnet
+export const baseSepolia = defineChain({
+  id: 84532,
+  name: 'Base Sepolia',
+  rpcUrls: {
+    default: { http: ['https://sepolia.base.org'] },
+  },
+  blockExplorers: {
+    default: { name: 'Basescan', url: 'https://sepolia.basescan.org' },
+  },
+});`,
+    },
+    setup: [
+      'Install: `npx skills add base/base-skills`',
+      'Add Base to your wallet using chain ID 8453',
+      'For testnet: use chain ID 84532 (Base Sepolia)',
+      'Replace public RPC endpoints with a provider for production',
+    ],
+    securityFindings: [
+      {
+        severity: 'low',
+        title: 'Public RPC Endpoints Rate-Limited in Production',
+        file: 'base-network/scripts/client.ts',
+        description:
+          'The public RPC endpoints (mainnet.base.org, sepolia.base.org) are rate-limited and not appropriate for production use. High-traffic apps may fail silently when rate limits are hit.',
+        recommendation:
+          'Use a dedicated RPC provider (Alchemy, Infura, QuickNode) for production. Never embed RPC API keys in client-side code — proxy through a backend.',
+      },
+      {
+        severity: 'low',
+        title: 'Chain ID Not Validated Before Transaction Signing',
+        file: 'base-network/scripts/tx.ts',
+        description:
+          'Transaction construction does not explicitly validate the chainId field before signing. A misconfigured wallet could sign transactions intended for Base on a different chain, risking replay attacks.',
+        recommendation:
+          'Always assert chainId in transaction parameters and verify it matches the connected network before signing.',
+      },
+    ],
+    overallRating: 'clean',
+  },
+  {
+    slug: 'base-deploy',
+    name: 'Base Deploy',
+    provider: 'Base',
+    providerUrl: 'https://base.org',
+    description:
+      'Deploy and verify smart contracts on Base with Foundry — testnet faucet access via CDP, encrypted keystore management, BaseScan verification, and common troubleshooting.',
+    demo: {
+      title: 'deploy.sh',
+      language: 'bash',
+      code: `# Import key into Foundry encrypted keystore (never commit keys)
+cast wallet import deployer --interactive
+
+# Deploy & verify on Base Sepolia
+forge create src/MyContract.sol:MyContract \\
+  --rpc-url https://sepolia.base.org \\
+  --account deployer \\
+  --verify \\
+  --etherscan-api-key $BASESCAN_API_KEY
+
+# Deploy to Base Mainnet
+forge create src/MyContract.sol:MyContract \\
+  --rpc-url https://mainnet.base.org \\
+  --account deployer \\
+  --verify \\
+  --etherscan-api-key $BASESCAN_API_KEY
+
+# Faucet: claim testnet ETH via CDP SDK
+npx ts-node scripts/faucet.ts --address 0xYourAddress`,
+    },
+    setup: [
+      'Install Foundry: `curl -L https://foundry.paradigm.xyz | bash`',
+      'Import key: `cast wallet import deployer --interactive`',
+      'Get BaseScan API key at basescan.org/apidashboard',
+      'Claim testnet ETH from portal.cdp.coinbase.com/products/faucet',
+    ],
+    securityFindings: [
+      {
+        severity: 'high',
+        title: 'Private Key Leakage in Verbose Forge Output',
+        file: 'base-deploy/scripts/deploy.sh',
+        description:
+          'Forge deployments with raw `--private-key` flags log the key in shell history and CI/CD system output. Any process with access to logs or history can extract the deployer key.',
+        recommendation:
+          'Always use Foundry encrypted keystore (`cast wallet import`) instead of raw private keys. Add `.env` to `.gitignore` and never pass keys as CLI arguments.',
+      },
+      {
+        severity: 'medium',
+        title: 'BaseScan API Key Exposed in CI Logs',
+        file: 'base-deploy/scripts/verify.sh',
+        description:
+          'BaseScan API keys passed as `--etherscan-api-key` command-line arguments appear in CI/CD system logs and process listings, potentially exposing them to other CI jobs or log aggregation tools.',
+        recommendation:
+          'Store BaseScan API keys in CI secret stores and reference via `foundry.toml` `${ENV_VAR}` syntax rather than passing as command-line arguments.',
+      },
+    ],
+    overallRating: 'flagged',
+  },
+  {
+    slug: 'base-node',
+    name: 'Base Node',
+    provider: 'Base',
+    providerUrl: 'https://base.org',
+    description:
+      'Run a production Base node with Reth client — hardware sizing, port configuration, snapshot bootstrapping, security hardening, and sync monitoring.',
+    demo: {
+      title: 'node-setup.sh',
+      language: 'bash',
+      code: `# Hardware: 8-core CPU, 16 GB RAM, NVMe SSD
+# Storage: (2 × chain_size) + snapshot_size + 20% buffer
+
+# Required firewall ports
+ufw allow 9222/udp  # Reth Discovery v5 (critical)
+ufw allow 30303/tcp # P2P Discovery & RLPx
+ufw deny 8545       # Block RPC from public internet
+ufw deny 8546       # Block WebSocket from public internet
+
+# Start Reth (Base)
+reth node \\
+  --chain base \\
+  --http --http.addr 127.0.0.1 \\
+  --ws --ws.addr 127.0.0.1 \\
+  --datadir /data/reth-base
+
+# Check sync status
+cast block-number --rpc-url http://127.0.0.1:8545`,
+    },
+    setup: [
+      'Provision server: 8-core CPU, 16 GB RAM, NVMe SSD',
+      'Open ports 9222 (UDP) and 30303 (TCP) in firewall',
+      'Block ports 8545 and 8546 from public internet',
+      'Download bootstrap snapshot to accelerate initial sync',
+    ],
+    securityFindings: [
+      {
+        severity: 'medium',
+        title: 'RPC Port Exposed to All Interfaces by Default',
+        file: 'base-node/scripts/start.sh',
+        description:
+          'Default Reth configuration binds the RPC port (8545) to all network interfaces. A node exposed to the internet without a firewall allows unauthenticated access to wallet management and admin RPCs.',
+        recommendation:
+          'Always bind RPC to `127.0.0.1` explicitly. Use a TLS-terminating reverse proxy (nginx/caddy) for any remote access. Set strict firewall rules before starting the node.',
+      },
+      {
+        severity: 'low',
+        title: 'Bootstrap Snapshot Integrity Not Verified',
+        file: 'base-node/scripts/snapshot.sh',
+        description:
+          'Snapshot files downloaded for initial sync are not integrity-checked against a published hash before import. A compromised snapshot source could provide manipulated chain data.',
+        recommendation:
+          'Verify snapshot checksums against hashes published in official Base documentation before importing. Prefer official snapshot sources only.',
+      },
+    ],
+    overallRating: 'warning',
+  },
+  {
+    slug: 'base-minikit',
+    name: 'MiniKit to Farcaster',
+    provider: 'Base',
+    providerUrl: 'https://base.org',
+    description:
+      'Migrate Mini Apps from MiniKit (OnchainKit) to native Farcaster SDK — async context patterns, hook-by-hook mappings, FrameProvider setup, and manifest configuration.',
+    demo: {
+      title: 'migrate.tsx',
+      language: 'tsx',
+      code: `// Before (MiniKit / OnchainKit)
+import { useMiniKit } from '@coinbase/onchainkit/minikit';
+const { context } = useMiniKit(); // sync access
+console.log(context.user.fid);
+
+// After (Farcaster SDK v0.2.0+)
+import sdk from '@farcaster/miniapp-sdk';
+import { useEffect, useState } from 'react';
+
+function App() {
+  const [context, setContext] = useState(null);
+
+  useEffect(() => {
+    // sdk.context is now a Promise — must await
+    sdk.context.then(setContext);
+    return () => { /* cleanup prevents stale state */ };
+  }, []);
+
+  // Replace FrameProvider, update manifest.json
+  // setPrimaryButton no longer accepts onClick callback
+}`,
+    },
+    setup: [
+      'Ensure Node.js >= 22.11.0 is installed',
+      'Update: `npm install @farcaster/miniapp-sdk`',
+      'Replace `@coinbase/onchainkit/minikit` imports throughout',
+      'Update manifest.json with Farcaster frame configuration',
+    ],
+    securityFindings: [
+      {
+        severity: 'low',
+        title: 'Async Context Race Condition in React Effects',
+        file: 'base-minikit/scripts/context.ts',
+        description:
+          'Awaiting sdk.context inside useEffect without a cleanup function can cause state updates on unmounted components. In strict mode or fast navigation, this leads to memory leaks and potential stale state bugs.',
+        recommendation:
+          'Use an ignore flag or AbortController in useEffect to cancel the context promise if the component unmounts before it resolves.',
+      },
+      {
+        severity: 'low',
+        title: 'Farcaster Manifest Not Validated Before Submission',
+        file: 'base-minikit/scripts/manifest.ts',
+        description:
+          'The migration guide does not include a manifest.json validation step. An invalid or misconfigured manifest can cause the Mini App to fail silently in the Farcaster client with no visible error.',
+        recommendation:
+          'Validate manifest.json against the Farcaster Mini App schema before deployment. Test the frame in Warpcast dev tools to catch configuration issues early.',
+      },
+    ],
+    overallRating: 'clean',
+  },
+
+  // ─── Other skills ─────────────────────────────────────────────────────────
   {
     slug: 'botchan',
     name: 'Botchan',

@@ -54,21 +54,31 @@ export default function HomePage() {
 
       {/* Skills Grid */}
       <section id="skills" className="py-10 sm:py-16">
-        <div className="mx-auto max-w-[1200px] px-4 sm:px-8">
-          <div className="flex items-center justify-between mb-10">
-            <h2 className="text-3xl font-extrabold tracking-tight text-[#1a1a1a]">
-              All Skills
-            </h2>
-            <span className="text-sm font-mono text-neutral-400 uppercase tracking-wider">
-              {skills.length} total
-            </span>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {skills.map((skill) => (
-              <SkillCard key={skill.slug} skill={skill} />
-            ))}
-          </div>
+        <div className="mx-auto max-w-[1200px] px-4 sm:px-8 space-y-16">
+          {[
+            { label: 'Bankr Skills', filter: (s: typeof skills[0]) => !s.slug.startsWith('uniswap-') && !s.slug.startsWith('base-') },
+            { label: 'Uniswap Skills', filter: (s: typeof skills[0]) => s.slug.startsWith('uniswap-') },
+            { label: 'Base Skills', filter: (s: typeof skills[0]) => s.slug.startsWith('base-') },
+          ].map(({ label, filter }) => {
+            const group = skills.filter(filter);
+            return (
+              <div key={label}>
+                <div className="flex items-center justify-between mb-8">
+                  <h2 className="text-3xl font-extrabold tracking-tight text-[#1a1a1a]">
+                    {label}
+                  </h2>
+                  <span className="text-sm font-mono text-neutral-400 uppercase tracking-wider">
+                    {group.length} total
+                  </span>
+                </div>
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {group.map((skill) => (
+                    <SkillCard key={skill.slug} skill={skill} />
+                  ))}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </section>
     </div>
